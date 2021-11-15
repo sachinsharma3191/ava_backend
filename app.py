@@ -7,7 +7,7 @@ from flask_socketio import *
 import service
 from settings import *
 
-# SocketIO
+# socket_io
 socket_io = SocketIO(app, cors_allowed_origins="*")
 
 valid_object = ["author", "origin", "conversationId", "data"]
@@ -95,7 +95,7 @@ def star_conversation():
 
 
 @app.route('/v1/conversation/unstar', methods=["POST"])
-def Unstar_conversation():
+def unstar_conversation():
     response = {"ok": True, "text": "Conversation Unstarred"}
     json_request = request.get_json()
     resp = service.unstar_conversation(json_request)
@@ -106,7 +106,7 @@ def Unstar_conversation():
     return Response(json.dumps(response), status=200, mimetype='application/json')
 
 
-# SocketIO Events
+# socket_io Events
 @socket_io.on('connect')
 def connected():
     print('Connected')
@@ -115,6 +115,30 @@ def connected():
 @socket_io.on('disconnect')
 def disconnected():
     print('Disconnected')
+
+
+@socket_io.on('MessageAdded')
+def message_added(message):
+    print('Message Added')
+    emit('messageAddedResponse', {'data': message}, broadcast=True)
+
+
+@socket_io.on("MessageDeleted")
+def message_deleted(message):
+    print("Message Deleted")
+    emit('messageDeleteResponse', {'data': message}, broadcast=True)
+
+
+@socket_io.on("MessageStarred")
+def message_starred(message):
+    print("Message Starred")
+    emit('messageStarredResponse', {'data': message}, broadcast=True)
+
+
+@socket_io.on("MessageUnstarred")
+def message_unstarred(message):
+    print("Message Unstarred")
+    emit('messageUnstarredResponse', {'data': message}, broadcast=True)
 
 
 if __name__ == '__main__':
