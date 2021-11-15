@@ -40,12 +40,13 @@ def info():
 @app.route("/v1/conversations")
 def get_conversations():
     conversations = service.get_all_conversations()
+    print(len(conversations))
     if len(conversations) == 0:
         response = {"ok": True, "msg": "Unable to fetch conversations"}
         return Response(json.dumps(response), status=400, mimetype='application/json')
-
-    response = {"ok": True, "conversations": conversations}
-    return Response(json.dumps(response), status=400, mimetype='application/json')
+    else:
+        response = {"ok": True, "conversations": conversations}
+        return Response(json.dumps(response), status=200, mimetype='application/json')
 
 
 @app.route("/v1/mutate", methods=["POST"])
@@ -142,4 +143,4 @@ def message_unstarred(message):
 
 
 if __name__ == '__main__':
-    socket_io.run(app, port=5060, debug=True)
+    socket_io.run(app, port=5600, debug=True)
